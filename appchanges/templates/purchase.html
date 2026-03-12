@@ -3,6 +3,43 @@
 {% block title %}Compra | Flask Crypto{% endblock %}
 
 {% block content %}
-    <h1>Compra</h1>
-    <p>Aquí irá el formulario de compra, venta o intercambio.</p>
+    <h1>Nueva operación</h1>
+
+    <form action="/purchase" method="post">
+        <label for="moneda_from">From</label>
+        <select name="moneda_from" id="moneda_from">
+            {% for moneda in monedas %}
+                <option value="{{ moneda }}" {% if moneda == moneda_from %}selected{% endif %}>
+                    {{ moneda }}
+                </option>
+            {% endfor %}
+        </select>
+
+        <label for="cantidad_from">Cantidad</label>
+        <input
+            type="number"
+            name="cantidad_from"
+            id="cantidad_from"
+            step="0.00000001"
+            min="0"
+            value="{{ cantidad_from or '' }}"
+            required
+        >
+
+        <label for="moneda_to">To</label>
+        <select name="moneda_to" id="moneda_to">
+            {% for moneda in monedas %}
+                <option value="{{ moneda }}" {% if moneda == moneda_to %}selected{% endif %}>
+                    {{ moneda }}
+                </option>
+            {% endfor %}
+        </select>
+
+        <button type="submit" name="accion" value="calcular">Calcular</button>
+        <button type="submit" name="accion" value="aceptar">Aceptar</button>
+    </form>
+
+    {% if accion %}
+        <p>Has pulsado: <strong>{{ accion }}</strong></p>
+    {% endif %}
 {% endblock %}
