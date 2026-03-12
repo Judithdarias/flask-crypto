@@ -1,4 +1,5 @@
-from flask import render_template, request
+from datetime import datetime
+from flask import render_template, request, redirect
 from appchanges.model import ModelCrypto
 
 MONEDAS = ["EUR", "BTC", "ETH", "USDT", "BNB", "XRP", "ADA", "SOL", "DOT", "MATIC"]
@@ -22,7 +23,8 @@ def register_routes(app):
                 moneda_from="",
                 cantidad_from="",
                 moneda_to="",
-                accion=""
+                accion="",
+                cantidad_to=""
             )
 
         moneda_from = request.form.get("moneda_from", "")
@@ -41,14 +43,25 @@ def register_routes(app):
         if cantidad_from_float <= 0:
             return render_template("error.html", message="La cantidad debe ser mayor que cero")
 
-        return render_template(
-            "purchase.html",
-            monedas=MONEDAS,
-            moneda_from=moneda_from,
-            cantidad_from=cantidad_from,
-            moneda_to=moneda_to,
-            accion=accion
-        )
+        cantidad_to = model.calcular_conversion(cantidad_from_float)
+
+        if accion == "aceptar":
+            ahora = datetime.now()
+
+            date = ahora.strftime("%Y-%m-%d")
+            time = ahora.strftime("%H:%M:%S")
+
+            model.insert_movimiento(
+                date,
+                time,
+                moneda_from,
+                cantidad_from_float,
+                moneda_to,
+                cantidad_to
+            )
+
+            return redirect("/")
+            
 
 
     @app.get("/status")

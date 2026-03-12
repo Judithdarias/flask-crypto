@@ -19,3 +19,19 @@ class ModelCrypto:
         conn.close()
 
         self.movimientos = filas
+        
+    def calcular_conversion(self, cantidad_from):
+        return round(cantidad_from * 2, 8)
+
+    def insert_movimiento(self, date, time, moneda_from, cantidad_from, moneda_to, cantidad_to):
+        conn = get_connection()
+        cursor = conn.cursor()
+
+        cursor.execute("""
+            INSERT INTO movimientos (
+                date, time, moneda_from, cantidad_from, moneda_to, cantidad_to
+            ) VALUES (?, ?, ?, ?, ?, ?)
+        """, (date, time, moneda_from, cantidad_from, moneda_to, cantidad_to))
+
+        conn.commit()
+        conn.close()

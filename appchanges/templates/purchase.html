@@ -38,6 +38,12 @@
         <button type="submit" name="accion" value="calcular">Calcular</button>
         <button type="submit" name="accion" value="aceptar">Aceptar</button>
     </form>
+    {% if cantidad_to %}
+    <article>
+        <h2>Resultado</h2>
+        <p>{{ cantidad_from }} {{ moneda_from }} = {{ cantidad_to }} {{ moneda_to }}</p>
+    </article>
+    {% endif %}
 
     {% if accion %}
         <p>Has pulsado: <strong>{{ accion }}</strong></p>
