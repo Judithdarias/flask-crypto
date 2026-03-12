@@ -3,6 +3,34 @@
 {% block title %}Inicio | Flask Crypto{% endblock %}
 
 {% block content %}
-    <h1>Inicio</h1>
-    <p>La app está funcionando.</p>
+    <h1>Movimientos</h1>
+
+    {% if movimientos %}
+        <table>
+            <thead>
+                <tr>
+                    <th>Fecha</th>
+                    <th>Hora</th>
+                    <th>From</th>
+                    <th>Cantidad</th>
+                    <th>To</th>
+                    <th>Cantidad</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for movimiento in movimientos %}
+                    <tr>
+                        <td>{{ movimiento["date"] }}</td>
+                        <td>{{ movimiento["time"] }}</td>
+                        <td>{{ movimiento["moneda_from"] }}</td>
+                        <td>{{ movimiento["cantidad_from"] }}</td>
+                        <td>{{ movimiento["moneda_to"] }}</td>
+                        <td>{{ movimiento["cantidad_to"] }}</td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    {% else %}
+        <p>SIN MOVIMIENTOS</p>
+    {% endif %}
 {% endblock %}
