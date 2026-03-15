@@ -3,6 +3,25 @@
 {% block title %}Estado | Flask Crypto{% endblock %}
 
 {% block content %}
-    <h1>Estado</h1>
-    <p>Aquí irá el estado de la inversión.</p>
+    <h1>Estado de la inversión</h1>
+
+    <article>
+        <p><strong>Invertido:</strong> {{ resumen["invertido"] }} EUR</p>
+        <p><strong>Recuperado:</strong> {{ resumen["recuperado"] }} EUR</p>
+        <p><strong>Valor de compra:</strong> {{ resumen["valor_compra"] }} EUR</p>
+    </article>
+
+    <article>
+        <h2>Saldos actuales</h2>
+
+        {% if saldos %}
+            <ul>
+                {% for moneda, saldo in saldos.items() %}
+                    <li>{{ moneda }}: {{ saldo }}</li>
+                {% endfor %}
+            </ul>
+        {% else %}
+            <p>No tienes criptomonedas en cartera.</p>
+        {% endif %}
+    </article>
 {% endblock %}

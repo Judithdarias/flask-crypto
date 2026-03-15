@@ -35,3 +35,74 @@ class ModelCrypto:
 
         conn.commit()
         conn.close()
+
+    def get_resumen_inversion(self):
+        conn = get_connection()
+        cursor = conn.cursor()
+
+        cursor.execute("""
+            SELECT SUM(cantidad_from) 
+            FROM movimientos
+            WHERE moneda_from = 'EUR'
+        """)
+        invertido = cursor.fetchone()[0]
+
+        cursor.execute("""
+            SELECT SUM(cantidad_to)
+            FROM movimientos
+            WHERE moneda_to = 'EUR'
+        """)
+        recuperado = cursor.fetchone()[0]
+
+        conn.close()
+
+        if invertido is None:
+            invertido = 0
+
+        if recuperado is None:
+            recuperado = 0
+
+        valor_compra = invertido - recuperado
+
+        return {
+            "invertido": invertido,
+            "recuperado": recuperado,
+            "valor_compra": valor_compra
+        }
+
+    def get_saldos_monedas(self):
+        monedas = ["BTC", "ETH", "USDT", "BNB", "XRP", "ADA", "SOL", "DOT", "MATIC"]
+        saldos = {}
+
+        conn = get_connection()
+        cursor = conn.cursor()
+
+        for moneda in monedas:
+            cursor.execute("""
+                SELECT SUM(cantidad_to)
+                FROM movimientos
+                WHERE moneda_to = ?
+            """, (moneda,))
+            entradas = cursor.fetchone()[0]
+
+            cursor.execute("""
+                SELECT SUM(cantidad_from)
+                FROM movimientos
+                WHERE moneda_from = ?
+            """, (moneda,))
+            salidas = cursor.fetchone()[0]
+
+            if entradas is None:
+                entradas = 0
+
+            if salidas is None:
+                salidas = 0
+
+            saldo = entradas - salidas
+
+            if saldo > 0:
+                saldos[moneda] = saldo
+
+        conn.close()
+
+        return saldos

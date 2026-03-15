@@ -61,10 +61,11 @@ def register_routes(app):
             )
 
             return redirect("/")
-            
-
 
     @app.get("/status")
     def status():
-        return render_template("status.html")
+        resumen = model.get_resumen_inversion()
+        saldos = model.get_saldos_monedas()
+        return render_template("status.html", resumen=resumen, saldos=saldos)
+
 
