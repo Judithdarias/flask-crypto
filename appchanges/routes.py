@@ -43,7 +43,7 @@ def register_routes(app):
         if cantidad_from_float <= 0:
             return render_template("error.html", message="La cantidad debe ser mayor que cero")
 
-        cantidad_to = model.calcular_conversion(cantidad_from_float)
+        cantidad_to = model.calcular_conversion(cantidad_from_float, moneda_from, moneda_to)
 
         if accion == "aceptar":
             ahora = datetime.now()
@@ -61,6 +61,17 @@ def register_routes(app):
             )
 
             return redirect("/")
+
+        return render_template(
+            "purchase.html",
+            monedas=MONEDAS,
+            moneda_from=moneda_from,
+            cantidad_from=cantidad_from,
+            moneda_to=moneda_to,
+            accion=accion,
+            cantidad_to=cantidad_to
+        )
+
 
     @app.get("/status")
     def status():

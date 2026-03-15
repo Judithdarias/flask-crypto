@@ -1,3 +1,5 @@
+import requests
+from appchanges.config import API_KEY, BASE_URL
 from appchanges.db import get_connection
 
 
@@ -20,8 +22,38 @@ class ModelCrypto:
 
         self.movimientos = filas
         
-    def calcular_conversion(self, cantidad_from):
-        return round(cantidad_from * 2, 8)
+    def calcular_conversion(self, cantidad_from, moneda_from, moneda_to):
+        headers = {
+            "X-CMC_PRO_API_KEY": API_KEY,
+            "Accept": "application/json"
+        }
+
+        params = {
+            "amount": cantidad_from,
+            "symbol": moneda_from,
+            "convert": moneda_to
+        }
+
+        response = requests.get(
+            f"{BASE_URL}/v2/tools/price-conversion",
+            headers=headers,
+            params=params,
+            timeout=10
+        )
+
+        if response.status_code != 200:
+            raise Exception("Error al consultar la API de CoinMarketCap")
+
+        data = response.json()
+
+        try:
+            cantidad_to = data["data"][0]["quote"][moneda_to]["price"]
+        except:
+            raise Exception("No se pudo calcular la conversión")
+
+        return round(cantidad_to, 8)
+
+
 
     def insert_movimiento(self, date, time, moneda_from, cantidad_from, moneda_to, cantidad_to):
         conn = get_connection()
