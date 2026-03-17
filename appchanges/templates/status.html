@@ -6,9 +6,16 @@
     <h1>Estado de la inversión</h1>
 
     <article>
-        <p><strong>Invertido:</strong> {{ resumen["invertido"] }} EUR</p>
-        <p><strong>Recuperado:</strong> {{ resumen["recuperado"] }} EUR</p>
-        <p><strong>Valor de compra:</strong> {{ resumen["valor_compra"] }} EUR</p>
+        <p><strong>Invertido:</strong> {{ "%.2f"|format(resumen["invertido"]) }} EUR</p>
+        <p><strong>Recuperado:</strong> {{ "%.2f"|format(resumen["recuperado"]) }} EUR</p>
+        <p><strong>Valor de compra:</strong> {{ "%.2f"|format(resumen["valor_compra"]) }} EUR</p>
+        <p><strong>Valor actual:</strong> {{ "%.2f"|format(valor_actual) }} EUR</p>
+        {% if ganancia >= 0 %}
+            <p><strong>Ganancia:</strong> {{ "%.2f"|format(ganancia) }} EUR</p>
+        {% else %}
+            <p><strong>Pérdida:</strong> {{ "%.2f"|format(ganancia) }} EUR</p>
+        {% endif %}
+
     </article>
 
     <article>
@@ -17,7 +24,7 @@
         {% if saldos %}
             <ul>
                 {% for moneda, saldo in saldos.items() %}
-                    <li>{{ moneda }}: {{ saldo }}</li>
+                    <li>{{ moneda }}: {{ "%.4f"|format(saldo) }}</li>
                 {% endfor %}
             </ul>
         {% else %}
@@ -25,3 +32,4 @@
         {% endif %}
     </article>
 {% endblock %}
+

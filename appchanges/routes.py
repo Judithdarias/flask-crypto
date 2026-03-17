@@ -12,7 +12,12 @@ def register_routes(app):
     @app.get("/")
     def home():
         model.get_all_movimientos()
-        return render_template("index.html", movimientos=model.movimientos)
+        return render_template(
+            "index.html",
+            movimientos=model.movimientos,
+            active_page="home"
+        )
+
 
     @app.route("/purchase", methods=["GET", "POST"])
     def purchase():
@@ -24,7 +29,8 @@ def register_routes(app):
                 cantidad_from="",
                 moneda_to="",
                 accion="",
-                cantidad_to=""
+                cantidad_to="",
+                active_page="purchase"
             )
 
         moneda_from = request.form.get("moneda_from", "")
@@ -48,8 +54,16 @@ def register_routes(app):
         except Exception as e:
             return render_template("error.html", message=str(e))
 
-
         if accion == "aceptar":
+            if moneda_from != "EUR":
+                saldo_disponible = model.get_saldo_moneda(moneda_from)
+
+                if cantidad_from_float > saldo_disponible:
+                    return render_template(
+                        "error.html",
+                        message=f"No tienes saldo suficiente de {moneda_from}"
+                    )
+
             ahora = datetime.now()
 
             date = ahora.strftime("%Y-%m-%d")
@@ -73,7 +87,8 @@ def register_routes(app):
             cantidad_from=cantidad_from,
             moneda_to=moneda_to,
             accion=accion,
-            cantidad_to=cantidad_to
+            cantidad_to=cantidad_to,
+            active_page="purchase"
         )
 
 
@@ -81,6 +96,19 @@ def register_routes(app):
     def status():
         resumen = model.get_resumen_inversion()
         saldos = model.get_saldos_monedas()
-        return render_template("status.html", resumen=resumen, saldos=saldos)
 
+        try:
+            valor_actual = model.get_valor_actual()
+        except Exception as e:
+            return render_template("error.html", message=str(e), active_page="status")
 
+        ganancia = valor_actual - resumen["valor_compra"]
+
+        return render_template(
+            "status.html",
+            resumen=resumen,
+            saldos=saldos,
+            valor_actual=valor_actual,
+            ganancia=ganancia,
+            active_page="status"
+        )

@@ -138,3 +138,42 @@ class ModelCrypto:
         conn.close()
 
         return saldos
+
+    def get_valor_actual(self):
+        saldos = self.get_saldos_monedas()
+        valor_actual = 0
+
+        for moneda, saldo in saldos.items():
+            euros = self.calcular_conversion(saldo, moneda, "EUR")
+            valor_actual += euros
+
+        return round(valor_actual, 2)
+
+    def get_saldo_moneda(self, moneda):
+        conn = get_connection()
+        cursor = conn.cursor()
+
+        # El saldo de una moneda es lo que ha entrado menos lo que ha salido.
+        cursor.execute("""
+            SELECT SUM(cantidad_to)
+            FROM movimientos
+            WHERE moneda_to = ?
+        """, (moneda,))
+        entradas = cursor.fetchone()[0]
+
+        cursor.execute("""
+            SELECT SUM(cantidad_from)
+            FROM movimientos
+            WHERE moneda_from = ?
+        """, (moneda,))
+        salidas = cursor.fetchone()[0]
+
+        conn.close()
+
+        if entradas is None:
+            entradas = 0
+
+        if salidas is None:
+            salidas = 0
+
+        return entradas - salidas

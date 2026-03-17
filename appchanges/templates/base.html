@@ -13,16 +13,37 @@
 </head>
 <body>
     <main class="container">
-        <nav>
-            <ul>
-                <li><strong>Flask Crypto</strong></li>
-            </ul>
-            <ul>
-                <li><a href="/">Inicio</a></li>
-                <li><a href="/purchase">Compra</a></li>
-                <li><a href="/status">Estado</a></li>
-            </ul>
-        </nav>
+    <nav>
+    <ul>
+        <li><strong>Flask Crypto</strong></li>
+    </ul>
+    <ul>
+        <li>
+            {% if active_page == "home" %}
+                <strong>Inicio</strong>
+            {% else %}
+                <a href="/">Inicio</a>
+            {% endif %}
+        </li>
+        <li>
+            {% if active_page == "purchase" %}
+                <strong>Compra</strong>
+            {% else %}
+                <a href="/purchase">Compra</a>
+            {% endif %}
+        </li>
+        <li>
+            {% if active_page == "status" %}
+                <strong>Estado</strong>
+            {% else %}
+                <a href="/status">Estado</a>
+            {% endif %}
+        </li>
+    </ul>
+</nav>
+
+
+
 
         {% block content %}{% endblock %}
     </main>
